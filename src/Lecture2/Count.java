@@ -1,3 +1,4 @@
+package Lecture2;
 class Count extends Thread {
 	static volatile int n = 0;
 	
