@@ -18,16 +18,44 @@ public class Pilot extends Thread {
 	}
 	
     // require tugs
-   	public void acquireTugs(Tugs tugs, int num) {
+   	public void acquireTugs(int num) {
    		tugs.minusAvailableNum(num, id);
    	}
    	
    	// release tugs
-   	public void releaseTugs(Tugs tugs, int num) {
+   	public void releaseTugs(int num) {
    		tugs.plusAvailableNum(num, id);
+   	}
+   	
+   	public String toString() {
+   		return("pilot " + id);
    	}
 	
 	public void run() {
-		
+		Ship ship;
+		while(true) {
+			if (arrivalZone.existShip()) {
+				ship = arrivalZone.removeAship();
+				System.out.println(this.toString() + " accquires " + ship.toString() + ".");
+				
+				try {
+					sleep(Params.TRAVEL_TIME);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				acquireTugs(Params.DOCKING_TUGS);	
+				try {
+					sleep(Params.DOCKING_TIME);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				berth.getShip(ship);
+				releaseTugs(Params.DOCKING_TUGS);
+				sleep(Params.UNLOADING_TIME);
+			}
+			
+		}
 	}
 }

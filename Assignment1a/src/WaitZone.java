@@ -18,7 +18,7 @@ public class WaitZone {
 	public void arrive(Ship ship) {
 		if (numOfShip + 1 <= Params.WAIT_ZONE_CAPACITY) {
 			shipsInZone.add(ship);
-			System.out.println("ship [" + ship.getId() + "] arrives at " + name);
+			System.out.println(ship.toString() + " arrives at " + name);
 		} else {
 			try{
 				wait();// something wrong...maybe?
@@ -28,11 +28,19 @@ public class WaitZone {
 		
 	}
 	
+	public Ship removeAship() {
+		return shipsInZone.remove(0);
+	}
+	
 	public void depart() {
 		if (!shipsInZone.isEmpty()) {
-			Ship ship = shipsInZone.remove(0);
-			System.out.println("ship [" + ship.getId() + "] departs " + name);
+			//Ship ship = shipsInZone.remove(0);
+			System.out.println(removeAship().toString() + " departs " + name);
 			notify();
 		}
+	}
+	
+	public Boolean existShip() {
+		return !shipsInZone.isEmpty();
 	}
 }
