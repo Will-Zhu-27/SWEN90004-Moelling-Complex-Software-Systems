@@ -27,6 +27,11 @@ public class Ship {
     public static Ship getNewShip() {
         return new Ship(nextId++);
     }
+    
+    // get ship id added by Will ##########
+    public int getId() {
+    	return id;
+    }
 
     // produce an identifying string for the cargo ship
     public String toString() {

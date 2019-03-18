@@ -18,6 +18,8 @@ class Params {
     static final int TRAVEL_TIME = 800;
 
     static final int DEBRIS_TIME = 1800;
+    
+    static final int WAIT_ZONE_CAPACITY = 1;	//added by Will#######
 
     private static final int MAX_ARRIVAL_INTERVAL = 400;
 

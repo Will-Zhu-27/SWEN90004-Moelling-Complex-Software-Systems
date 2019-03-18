@@ -1,5 +1,3 @@
-package Workshop2;
-
 class Count extends Thread {
 
     // number of increments per thread
