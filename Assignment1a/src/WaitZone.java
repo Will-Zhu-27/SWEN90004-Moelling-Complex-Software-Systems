@@ -21,7 +21,7 @@ public class WaitZone {
 			System.out.println("ship [" + ship.getId() + "] arrives at " + name);
 		} else {
 			try{
-				//wait();
+				wait();// something wrong...maybe?
 			} catch(InterruptedException e) {
 			};
 		}

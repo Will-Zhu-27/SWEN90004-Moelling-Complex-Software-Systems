@@ -17,6 +17,16 @@ public class Pilot extends Thread {
 		this.berth = berth;
 	}
 	
+    // require tugs
+   	public void acquireTugs(Tugs tugs, int num) {
+   		tugs.minusAvailableNum(num, id);
+   	}
+   	
+   	// release tugs
+   	public void releaseTugs(Tugs tugs, int num) {
+   		tugs.plusAvailableNum(num, id);
+   	}
+	
 	public void run() {
 		
 	}

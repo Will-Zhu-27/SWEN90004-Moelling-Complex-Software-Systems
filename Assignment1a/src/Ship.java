@@ -33,8 +33,13 @@ public class Ship {
     	return id;
     }
 
+    // get the ship status by Will###########
+    public Boolean getLoaded() {
+    	return loaded;
+    }
     // produce an identifying string for the cargo ship
     public String toString() {
         return "ship [" + id + "]";
     }
+    
 }
