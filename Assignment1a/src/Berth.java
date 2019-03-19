@@ -6,7 +6,7 @@
 public class Berth {
 	private String name;
 	private volatile Boolean shield;
-	private Ship ship;
+	private volatile Ship ship;
 	
 	Berth(String name) {
 		this.name = name;
@@ -35,6 +35,7 @@ public class Berth {
 	}
 	
 	public void undock() {
+		// spend some time undocking
 		try {
 			Thread.sleep(Params.UNDOCKING_TIME);
 		} catch (InterruptedException e) {
@@ -73,7 +74,7 @@ public class Berth {
 		shield = status;
 		if (shield == false) {
 			System.out.println("Shield is deactivated.");
-			notify();
+			notifyAll();
 		} else {
 			System.out.println("Shield is activated.");
 		}

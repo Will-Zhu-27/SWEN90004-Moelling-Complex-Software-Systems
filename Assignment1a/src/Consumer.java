@@ -29,5 +29,6 @@ public class Consumer extends Thread {
                 this.interrupt();
             }
         }
+        System.out.println("Mention: Consumer thread is interrupted!!!");
     }
 }

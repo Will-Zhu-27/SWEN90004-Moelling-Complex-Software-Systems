@@ -35,11 +35,13 @@ public class Pilot extends Thread {
 		Ship ship;
 		while(true) {
 			//if (arrivalZone.existShip()) {
-				ship = arrivalZone.removeAship();
+				ship = arrivalZone.getAship();
 				// pilot acquires ship
 				System.out.println(this.toString() + " acquires " + ship.toString() + ".");
 				// pilot acquires 3 tugs
-				acquireTugs(Params.DOCKING_TUGS);	
+				acquireTugs(Params.DOCKING_TUGS);
+				// now ship departs the arrival zone
+				arrivalZone.removeAship(ship);
 				// travel time
 				try {
 					sleep(Params.TRAVEL_TIME);
@@ -47,19 +49,24 @@ public class Pilot extends Thread {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
+				
+				/****now ship is in the vicinity of the berth****/
 				// until berth is available, spend docking time, ship docks at berth
 				berth.dock(ship);
 				// pilot releases 3 tugs
 				releaseTugs(Params.DOCKING_TUGS);
-				// begin unload
-				berth.unload();
-				
-				// wait to undock
-				berth.waitShieldDeactivate();
+				// unload
+				berth.unload();			
 				// pilot acquire 2 tugs
 				acquireTugs(Params.UNDOCKING_TUGS);
+				// wait to undocking
+				berth.waitShieldDeactivate();								
 				// ship docks from berth
 				berth.undock();
+				
+				
+				/****now ship is in the vicinity of the berth****/
 				// travel time
 				try {
 					sleep(Params.TRAVEL_TIME);
@@ -72,8 +79,7 @@ public class Pilot extends Thread {
 				System.out.println(this.toString() + " releases " + ship.toString() + ".");
 				// pilot releases tugs
 				releaseTugs(Params.UNDOCKING_TUGS);
-			//}
-			
+			//}	
 		}
 	}
 }

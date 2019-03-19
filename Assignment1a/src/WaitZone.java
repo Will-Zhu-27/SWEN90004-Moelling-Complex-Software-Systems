@@ -35,6 +35,24 @@ public class WaitZone {
 		return shipsInZone.remove(0);
 	}
 	
+	public synchronized void removeAship(Ship ship) {
+		shipsInZone.remove(ship);
+		notify();
+	}
+	
+	public synchronized Ship getAship() {
+		//notify(); //???
+		while(shipsInZone.size() == 0) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return shipsInZone.get(0);
+	}
+	
 	public void depart() {
 		if (!shipsInZone.isEmpty()) {
 			Ship ship = removeAship();
