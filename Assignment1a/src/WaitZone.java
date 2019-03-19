@@ -26,13 +26,13 @@ public class WaitZone {
 		return shipsInZone.remove(0);
 	}
 	
-	/*public void depart() {
+	public void depart() {
 		if (!shipsInZone.isEmpty()) {
-			//Ship ship = shipsInZone.remove(0);
+			Ship ship = shipsInZone.remove(0);
 			System.out.println(removeAship().toString() + " departs " + name);
-			notify();
+			//notify();
 		}
-	}*/
+	}
 	
 	public Boolean existShip() {
 		return !shipsInZone.isEmpty();
