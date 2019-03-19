@@ -15,7 +15,7 @@ public class Ship {
     private static int nextId = 1;
 
     // a flag indicating whether the ship is currently loaded
-    Boolean loaded = false;  //Change by Will #####
+    Boolean loaded;  //Change by Will #####
 
     // create a new vessel with a given identifier
     private Ship(int id) {
@@ -37,6 +37,7 @@ public class Ship {
     public Boolean getLoaded() {
     	return loaded;
     }
+    
     // produce an identifying string for the cargo ship
     public String toString() {
         return "ship [" + id + "]";
