@@ -22,7 +22,7 @@ public class Producer extends Thread {
                 // create a new cargo ship and send it to the arrvial zone.
                 Ship ship = Ship.getNewShip();
                 arrivalZone.arrive(ship);
-
+                arrivalZone.depart();
                 // let some time pass before the next ship arrives
                 sleep(Params.arrivalLapse());
             } catch (InterruptedException e) {
