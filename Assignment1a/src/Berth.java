@@ -72,7 +72,10 @@ public class Berth {
 	public synchronized void setShield(Boolean status) {
 		shield = status;
 		if (shield == false) {
+			System.out.println("Shield is deactivated.");
 			notify();
+		} else {
+			System.out.println("Shield is activated.");
 		}
 	}
 	

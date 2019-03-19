@@ -23,12 +23,12 @@ public class Tugs {
 			}
 		}
 		availableNum -= num;
-		System.out.println("pilot " + pilotId + "acquires " + num + "tugs" + "(" + availableNum + " ) available).");
+		System.out.println("pilot " + pilotId + " acquires " + num + " tugs (" + availableNum + " available).");
 	}
 	
 	public synchronized void plusAvailableNum(int num, int pilotId) {
 		availableNum += num;
-		System.out.println("pilot " + pilotId + "releases " + num + "tugs" + "(" + availableNum + " ) available).");
+		System.out.println("pilot " + pilotId + " releases " + num + " tugs (" + availableNum + " available).");
 		notify();
 	}
 }

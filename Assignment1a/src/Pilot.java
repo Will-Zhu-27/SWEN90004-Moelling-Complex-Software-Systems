@@ -17,7 +17,7 @@ public class Pilot extends Thread {
 		this.berth = berth;
 	}
 	
-    // require tugs
+    // acquire tugs
    	public void acquireTugs(int num) {
    		tugs.minusAvailableNum(num, id);
    	}
@@ -34,7 +34,7 @@ public class Pilot extends Thread {
 	public void run() {
 		Ship ship;
 		while(true) {
-			if (arrivalZone.existShip()) {
+			//if (arrivalZone.existShip()) {
 				ship = arrivalZone.removeAship();
 				// pilot acquires ship
 				System.out.println(this.toString() + " acquires " + ship.toString() + ".");
@@ -72,7 +72,7 @@ public class Pilot extends Thread {
 				System.out.println(this.toString() + " releases " + ship.toString() + ".");
 				// pilot releases tugs
 				releaseTugs(Params.UNDOCKING_TUGS);
-			}
+			//}
 			
 		}
 	}

@@ -8,33 +8,42 @@ import java.util.ArrayList;
 
 public class WaitZone {
 	private String name;
-	private List<Ship> shipsInZone;
+	private volatile List<Ship> shipsInZone;
 	//private int numOfShip;
 	WaitZone(String name) {
 		this.name = name;
 		shipsInZone = new ArrayList<Ship>();
 	}
 	
-	public void arrive(Ship ship) {
+	public synchronized void arrive(Ship ship) {
 		waitZoneIsAvailable();
 		shipsInZone.add(ship);
-		System.out.println(ship.toString() + " arrives at " + name + ".");
+		System.out.println(ship.toString() + " arrives at " + name + " zone.");
+		notify();
 	}
 	
 	public synchronized Ship removeAship() {
-		notify(); //???
+		//notify(); //???
+		while(shipsInZone.size() == 0) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return shipsInZone.remove(0);
 	}
 	
 	public void depart() {
 		if (!shipsInZone.isEmpty()) {
-			Ship ship = shipsInZone.remove(0);
-			System.out.println(removeAship().toString() + " departs " + name);
-			//notify();
+			Ship ship = removeAship();
+			System.out.println(ship.toString() + " departs " + name + " zone.");
 		}
 	}
 	
-	public Boolean existShip() {
+	public synchronized Boolean existShip() {
+		
 		return !shipsInZone.isEmpty();
 	}
 	

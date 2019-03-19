@@ -5,21 +5,18 @@
  */
 public class Operator extends Thread {
 	private Berth berth;
-	private Boolean activated = false;
+	
 	Operator(Berth berth) {
 		this.berth = berth;
 	}
 	
 	public void run() {
+		
 		while(true) {
 			try{
-				activated = false;
-				System.out.println("Shield is deactivated.");
-				// wait random time to activate the shield
+				berth.setShield(false);
 				sleep(Params.debrisLapse());
-				activated = true;
-				System.out.println("Shield is activated.");
-				// during these time, shield is activated
+				berth.setShield(true);
 				sleep(Params.DEBRIS_TIME);
 			} catch(InterruptedException e){
 			};	
