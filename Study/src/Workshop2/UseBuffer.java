@@ -3,6 +3,7 @@ package Workshop2;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 /**
  * A bounded buffer maintains a fixed number of "slots". Items can be
@@ -17,6 +18,10 @@ class BoundedBuffer
 
   // the buffer
   List<Integer> buffer;
+  
+  private Semaphore mutex = new Semaphore(1);
+  private Semaphore notEmpty = new Semaphore(0);
+  private Semaphore notFull = new Semaphore(MAXSIZE);
 
   public BoundedBuffer()
   {
@@ -29,12 +34,6 @@ class BoundedBuffer
   {
     if (buffer.size() < MAXSIZE) {
       buffer.add(input);
-      notify();
-    } else {
-    	try {
-    		wait();
-    	} catch(InterruptedException e) {	
-    	}
     }
   }
 
@@ -42,14 +41,7 @@ class BoundedBuffer
   public synchronized int get()
     throws InterruptedException
   {
-    if (buffer.size() == 0) {
-    	try {
-    		wait();
-    	} catch(InterruptedException e) {
-    	}
-    }
-	int result = buffer.remove(0);
-	notify();
+    int result = buffer.remove(0);
     return result;
   }
 
@@ -83,7 +75,7 @@ class Producer extends Thread
       while (true) {
 
 	//insert a random integer
-	int next = random.nextInt(1000);
+	int next = random.nextInt();
 	buffer.put(next);
 
 	//sleep for a random period between
@@ -91,8 +83,7 @@ class Producer extends Thread
 	int sleep = random.nextInt(10);
 	Thread.sleep(sleep);
 
-	//System.err.println("b.size() = " + buffer.size());
-	System.out.println("b.size() = " + buffer.size());
+	System.err.println("b.size() = " + buffer.size());
       }
     }
     catch (InterruptedException e) {}
@@ -124,8 +115,7 @@ class Consumer extends Thread
 	//get the next integer from the buffer
 	int next = buffer.get();
 
-	//System.err.println("next = " + next);
-	System.out.println("next = " + next);
+	System.err.println("next = " + next);
 
 	//sleep for a random period between
 	//0 and 49 milliseconds
