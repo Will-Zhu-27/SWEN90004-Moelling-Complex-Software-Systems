@@ -29,19 +29,27 @@ class BoundedBuffer
   }
 
   // add an element to the end of the buffer if it is not full
-  public synchronized void put(int input)
+  public void put(int input)
     throws InterruptedException
   {
-    if (buffer.size() < MAXSIZE) {
-      buffer.add(input);
-    }
+    notFull.acquire();
+    mutex.acquire();
+    
+    buffer.add(input);
+    
+    mutex.release();
+    notEmpty.release();
   }
 
   // take an element from the front of the buffer
-  public synchronized int get()
+  public  int get()
     throws InterruptedException
   {
+    notEmpty.acquire();
+    mutex.acquire();
     int result = buffer.remove(0);
+    mutex.release();
+    notFull.release();
     return result;
   }
 
