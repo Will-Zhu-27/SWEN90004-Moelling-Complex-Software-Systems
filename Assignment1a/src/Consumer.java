@@ -7,15 +7,22 @@
 
 public class Consumer extends Thread {
 
-    // the wait zone from which cargo ships depart
+    /**
+     *  the wait zone from which cargo ships depart
+     */
     private WaitZone departureZone;
 
-    // creates a new consumer for the given wait zone
+    /**
+     *  creates a new consumer for the given wait zone
+     * @param newDepartureZone departureZone
+     */
     Consumer(WaitZone newDepartureZone) {
         this.departureZone = newDepartureZone;
     }
 
-    // repeatedly collect waiting ships from the departure zone
+    /**
+     *  repeatedly collect waiting ships from the departure zone
+     */
     public void run() {
         while (!isInterrupted()) {
             try {

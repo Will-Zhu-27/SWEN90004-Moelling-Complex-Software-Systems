@@ -14,7 +14,6 @@ public class Main {
     /**
      * The driver of the space station docking simulation
      */
-
     public static void main(String [] args) throws InterruptedException {
 
         // generate the locations and tugs

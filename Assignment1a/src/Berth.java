@@ -1,19 +1,38 @@
 /**
+ * Represents the berth.
  * 
  * @author yuqiangz@student.unimelb.edu.au
  *
  */
 public class Berth {
+	/**
+	 *  represents the name of an object of class Berth
+	 */
 	private String name;
+	/**
+	 *  represents the status of shield, 
+	 *  true value means shield is activated.
+	 */
 	private volatile Boolean shield;
+	/**
+	 * represents the ship in the berth
+	 */
 	private volatile Ship ship;
 	
-	Berth(String name) {
+	/**
+	 * Initialize an object of class Berth and set its name
+	 * @param name the name of an object of class Berth
+	 */
+	public Berth(String name) {
 		this.name = name;
 		ship = null;
 		shield = false;
 	}
 	
+	/**
+	 * A ship requests to dock into the berth.
+	 * @param ship plans to dock into the berth.
+	 */
 	public synchronized void dock(Ship ship) {
 		while (this.ship != null || shield == true) {
 			try {
@@ -35,6 +54,9 @@ public class Berth {
 		//pilot.releaseTugs(Params.DOCKING_TUGS);
 	}
 	
+	/**
+	 * The ship in the berth plans to undock.
+	 */
 	public void undock() {
 		// spend some time undocking
 		try {
@@ -48,6 +70,9 @@ public class Berth {
 		ship = null;
 	}
 	
+	/**
+	 * The ship in the berth plans to unload cargo.
+	 */
 	public void unload() {
 		// ship docks at berth
 		System.out.println(ship.toString() + " being unloaded.");
@@ -60,6 +85,9 @@ public class Berth {
 		}
 	}
 	
+	/**
+	 * Wait until the ship is deactivated.
+	 */
 	public synchronized void waitShieldDeactivate() {
 		while(shield == true) {
 			try {
@@ -71,6 +99,10 @@ public class Berth {
 		}
 	}
 	
+	/**
+	 * Set the status of shield.
+	 * @param status the new status of shield
+	 */
 	public synchronized void setShield(Boolean status) {
 		shield = status;
 		if (shield == false) {
@@ -81,7 +113,10 @@ public class Berth {
 		}
 	}
 	
-
+	/**
+	 * Get the name of the object of class Berth in form of String.
+	 * @return the name of the object of class Berth in form of String.
+	 */
 	public String toString() {
 		return name;
 	}

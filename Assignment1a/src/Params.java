@@ -1,5 +1,10 @@
 import java.util.Random;
 
+/**
+ * A class which, for convenience, 
+ * gathers together various system-wide parameters, including time intervals.
+ *
+ */
 class Params {
     static final int NUM_PILOTS = 2;
 
@@ -18,8 +23,10 @@ class Params {
     static final int TRAVEL_TIME = 800;
 
     static final int DEBRIS_TIME = 1800;
-    
-    static final int WAIT_ZONE_CAPACITY = 1;	//added by Will#######
+    /**
+     * the max number of ships staying in a wait zone at the same time.
+     */
+    static final int WAIT_ZONE_CAPACITY = 1;
 
     private static final int MAX_ARRIVAL_INTERVAL = 400;
 
