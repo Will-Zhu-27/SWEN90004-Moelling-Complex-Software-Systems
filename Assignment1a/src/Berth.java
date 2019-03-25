@@ -22,6 +22,8 @@ public class Berth {
 			}
 		}
 		this.ship = ship;
+		// ship docks at berth
+		System.out.println(ship.toString() + " docks at " + this.toString());
 		// docking time
 		try {
 			Thread.sleep(Params.DOCKING_TIME);
@@ -29,8 +31,7 @@ public class Berth {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// ship docks at berth
-		System.out.println(ship.toString() + " docks at " + this.toString());
+		
 		//pilot.releaseTugs(Params.DOCKING_TUGS);
 	}
 	
