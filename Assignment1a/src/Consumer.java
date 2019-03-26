@@ -27,6 +27,7 @@ public class Consumer extends Thread {
      */
     public void run() {
         while (!isInterrupted()) {
+    	//while (true) {
             try {
                 // remove a vessel that is in the departure wait zone
                 departureZone.depart();

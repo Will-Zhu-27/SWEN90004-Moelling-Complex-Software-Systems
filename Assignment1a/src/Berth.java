@@ -62,8 +62,11 @@ public class Berth {
 	 * The ship in the berth plans to undock.
 	 */
 	public void undock() {
-		// wait to undocking
+		// wait until shield is deactivated.
 		waitShieldDeactivate();
+		//begin undock
+		System.out.println(ship.toString() + " undocks from berth.");
+		ship = null;
 		// undocking time
 		try {
 			Thread.sleep(Params.UNDOCKING_TIME);
@@ -71,10 +74,6 @@ public class Berth {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		// ship docks from berth
-		System.out.println(ship.toString() + " undocks from berth.");
-		ship = null;
 	}
 	
 	/**

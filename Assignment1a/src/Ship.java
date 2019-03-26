@@ -18,7 +18,7 @@ public class Ship {
     /**
      * a flag indicating whether the ship is currently loaded.
      */
-    private Boolean loaded;
+    private Boolean loaded;//???
 
 	/**
 	 * Create a new vessel with a given identifier.

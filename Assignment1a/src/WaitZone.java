@@ -48,6 +48,7 @@ public class WaitZone {
 	 * @return a ship from the zone.
 	 */
 	public synchronized Ship removeAship() {
+		Ship ship;
 		while(shipsInZone.size() == 0) {
 			try {
 				wait();
@@ -56,8 +57,9 @@ public class WaitZone {
 				e.printStackTrace();
 			}
 		}
-		notify();
-		return shipsInZone.remove(0);
+		ship = shipsInZone.remove(0);
+		notifyAll();
+		return ship;
 	}
 	
 	/**
@@ -68,7 +70,7 @@ public class WaitZone {
 	 */
 	public synchronized void removeAship(Ship ship) {
 		shipsInZone.remove(ship);
-		notify();
+		notifyAll();
 	}
 	
 	/**

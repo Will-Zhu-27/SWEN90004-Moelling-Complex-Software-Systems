@@ -61,6 +61,6 @@ public class Tugs {
 		availableNum += num;
 		System.out.println("pilot " + pilotId + " releases " + num + 
 				" tugs (" + availableNum + " available).");
-		notify();
+		notifyAll();
 	}
 }

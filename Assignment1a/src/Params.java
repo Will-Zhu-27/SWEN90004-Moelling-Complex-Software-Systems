@@ -6,9 +6,9 @@ import java.util.Random;
  *
  */
 class Params {
-    static final int NUM_PILOTS = 2;
+    static final int NUM_PILOTS = 10;
 
-    static final int NUM_TUGS = 5;
+    static final int NUM_TUGS = 26;
 
     static final int DOCKING_TUGS = 3;
 

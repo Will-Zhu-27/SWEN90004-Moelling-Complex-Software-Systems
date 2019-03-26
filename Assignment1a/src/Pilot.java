@@ -131,7 +131,8 @@ public class Pilot extends Thread {
 				e.printStackTrace();
 			}
 			// pilot releases ship when the departure zone is available.
-			departureZone.waitZoneIsAvailable();
+			//departureZone.waitZoneIsAvailable();
+			departureZone.arrive(ship);
 			System.out.println(this.toString() + " releases " + 
 					ship.toString() + ".");
 			// pilot releases tugs

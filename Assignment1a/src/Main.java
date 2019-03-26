@@ -10,7 +10,6 @@
  */
 
 public class Main {
-
     /**
      * The driver of the space station docking simulation.
      */
