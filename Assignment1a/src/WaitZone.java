@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 /**
  * Represents a wait zone.
+ * 
  * @author yuqiangz@student.unimelb.edu.au
  *
  */
@@ -18,7 +19,9 @@ public class WaitZone {
 	
 	/**
 	 * Initialize an object of class and set its configuration.
-	 * @param name the name of the zone.
+	 * 
+	 * @param name
+	 *            the name of the zone.
 	 */
 	public WaitZone(String name) {
 		this.name = name;
@@ -27,7 +30,9 @@ public class WaitZone {
 	
 	/**
 	 * A ship arrives in the zone.
-	 * @param ship which arrives in the zone.
+	 * 
+	 * @param ship
+	 *            which arrives in the zone.
 	 */
 	public synchronized void arrive(Ship ship) {
 		waitZoneIsAvailable();
@@ -39,6 +44,7 @@ public class WaitZone {
 	
 	/**
 	 * Remove a ship from the zone.
+	 * 
 	 * @return a ship from the zone.
 	 */
 	public synchronized Ship removeAship() {
@@ -56,7 +62,9 @@ public class WaitZone {
 	
 	/**
 	 * Remove a specified ship from the zone.
-	 * @param ship needs to be removed in the zone.
+	 * 
+	 * @param ship
+	 *            needs to be removed in the zone.
 	 */
 	public synchronized void removeAship(Ship ship) {
 		shipsInZone.remove(ship);
@@ -65,6 +73,7 @@ public class WaitZone {
 	
 	/**
 	 * Get a ship from the zone but doesn't remove it from the zone.
+	 * 
 	 * @return a ship from the zone.
 	 */
 	public synchronized Ship getAship() {
@@ -92,7 +101,8 @@ public class WaitZone {
 	
 	/**
 	 * Show whether is there any ship in the zone.
-	 * @return true: there are ships. false: no ship. 
+	 * 
+	 * @return true: there are ships. false: no ship.
 	 */
 	public synchronized Boolean existShip() {
 		return !shipsInZone.isEmpty();

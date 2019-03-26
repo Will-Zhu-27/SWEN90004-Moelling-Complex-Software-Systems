@@ -6,7 +6,7 @@
  */
 public class Berth {
 	/**
-	 *  represents the name of an object of class Berth
+	 * represents the name of an object of class Berth.
 	 */
 	private String name;
 	/**
@@ -15,13 +15,15 @@ public class Berth {
 	 */
 	private volatile Boolean shield;
 	/**
-	 * represents the ship in the berth
+	 * represents the ship in the berth.
 	 */
 	private volatile Ship ship;
 	
 	/**
-	 * Initialize an object of class Berth and set its name
-	 * @param name the name of an object of class Berth
+	 * Initialize an object of class Berth and set its name.
+	 * 
+	 * @param name
+	 *            the name of an object of class Berth.
 	 */
 	public Berth(String name) {
 		this.name = name;
@@ -31,17 +33,21 @@ public class Berth {
 	
 	/**
 	 * A ship requests to dock into the berth.
-	 * @param ship plans to dock into the berth.
+	 * 
+	 * @param ship
+	 *            plans to dock into the berth.
 	 */
 	public synchronized void dock(Ship ship) {
+		// wait until there is no ship in berth and shield is deactivated.
 		while (this.ship != null || shield == true) {
 			try {
 				wait();
 			}catch(InterruptedException e) {
 			}
 		}
-		this.ship = ship;
+		
 		// ship docks at berth
+		this.ship = ship;
 		System.out.println(ship.toString() + " docks at " + this.toString());
 		// docking time
 		try {
@@ -49,22 +55,23 @@ public class Berth {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
-		//pilot.releaseTugs(Params.DOCKING_TUGS);
+		}	
 	}
 	
 	/**
 	 * The ship in the berth plans to undock.
 	 */
 	public void undock() {
-		// spend some time undocking
+		// wait to undocking
+		waitShieldDeactivate();
+		// undocking time
 		try {
 			Thread.sleep(Params.UNDOCKING_TIME);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		// ship docks from berth
 		System.out.println(ship.toString() + " undocks from berth.");
 		ship = null;
@@ -74,7 +81,6 @@ public class Berth {
 	 * The ship in the berth plans to unload cargo.
 	 */
 	public void unload() {
-		// ship docks at berth
 		System.out.println(ship.toString() + " being unloaded.");
 		// unloading time
 		try {
@@ -101,7 +107,9 @@ public class Berth {
 	
 	/**
 	 * Set the status of shield.
-	 * @param status the new status of shield
+	 * 
+	 * @param status
+	 *            the new status of shield.
 	 */
 	public synchronized void setShield(Boolean status) {
 		shield = status;
@@ -115,6 +123,7 @@ public class Berth {
 	
 	/**
 	 * Get the name of the object of class Berth in form of String.
+	 * 
 	 * @return the name of the object of class Berth in form of String.
 	 */
 	public String toString() {

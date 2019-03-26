@@ -23,9 +23,12 @@ class Params {
     static final int TRAVEL_TIME = 800;
 
     static final int DEBRIS_TIME = 1800;
-    /**
-     * the max number of ships staying in a wait zone at the same time.
-     */
+    
+	/**
+	 * the max number of ships staying in a wait zone at the same time.
+	 * 
+	 * @author yuqiangz@student.unimelb.edu.au
+	 */
     static final int WAIT_ZONE_CAPACITY = 1;
 
     private static final int MAX_ARRIVAL_INTERVAL = 400;
