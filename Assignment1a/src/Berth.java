@@ -10,42 +10,39 @@ public class Berth {
 	 */
 	private String name;
 	/**
-	 *  represents the status of shield, 
-	 *  true value means shield is activated.
+	 * represents the status of shield, true value means shield is activated.
 	 */
 	private volatile Boolean shield;
 	/**
 	 * represents the ship in the berth.
 	 */
 	private volatile Ship ship;
-	
+
 	/**
 	 * Initialize an object of class Berth and set its name.
 	 * 
-	 * @param name
-	 *            the name of an object of class Berth.
+	 * @param name the name of an object of class Berth.
 	 */
 	public Berth(String name) {
 		this.name = name;
 		ship = null;
 		shield = false;
 	}
-	
+
 	/**
 	 * A ship requests to dock into the berth.
 	 * 
-	 * @param ship
-	 *            plans to dock into the berth.
+	 * @param ship plans to dock into the berth.
 	 */
 	public synchronized void dock(Ship ship) {
 		// wait until there is no ship in berth and shield is deactivated.
 		while (this.ship != null || shield == true) {
 			try {
 				wait();
-			}catch(InterruptedException e) {
+			} catch (InterruptedException e) {
 			}
 		}
-		
+
 		// ship docks at berth
 		this.ship = ship;
 		System.out.println(ship.toString() + " docks at " + this.toString());
@@ -55,16 +52,16 @@ public class Berth {
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}	
+		}
 	}
-	
+
 	/**
 	 * The ship in the berth plans to undock.
 	 */
 	public void undock() {
 		// wait until shield is deactivated.
 		waitShieldDeactivate();
-		//begin undock
+		// begin undock
 		System.out.println(ship.toString() + " undocks from berth.");
 		ship = null;
 		// undocking time
@@ -75,7 +72,7 @@ public class Berth {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * The ship in the berth plans to unload cargo.
 	 */
@@ -89,12 +86,12 @@ public class Berth {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Wait until the ship is deactivated.
 	 */
 	public synchronized void waitShieldDeactivate() {
-		while(shield == true) {
+		while (shield == true) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -103,12 +100,11 @@ public class Berth {
 			}
 		}
 	}
-	
+
 	/**
 	 * Set the status of shield.
 	 * 
-	 * @param status
-	 *            the new status of shield.
+	 * @param status the new status of shield.
 	 */
 	public synchronized void setShield(Boolean status) {
 		shield = status;
@@ -119,7 +115,7 @@ public class Berth {
 			System.out.println("Shield is activated.");
 		}
 	}
-	
+
 	/**
 	 * Get the name of the object of class Berth in form of String.
 	 * 

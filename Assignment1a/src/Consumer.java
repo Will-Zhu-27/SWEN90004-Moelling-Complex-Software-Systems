@@ -7,38 +7,36 @@
 
 public class Consumer extends Thread {
 
-    /**
-     * the wait zone from which cargo ships depart.
-     */
-    private WaitZone departureZone;
+	/**
+	 * the wait zone from which cargo ships depart.
+	 */
+	private WaitZone departureZone;
 
 	/**
 	 * Creates a new consumer for the given wait zone.
 	 * 
-	 * @param newDepartureZone
-	 *            departureZone
+	 * @param newDepartureZone departureZone
 	 */
-    Consumer(WaitZone newDepartureZone) {
-        this.departureZone = newDepartureZone;
-    }
+	Consumer(WaitZone newDepartureZone) {
+		this.departureZone = newDepartureZone;
+	}
 
-    /**
-     * Repeatedly collect waiting ships from the departure zone.
-     */
-    public void run() {
-        while (!isInterrupted()) {
-    	//while (true) {
-            try {
-                // remove a vessel that is in the departure wait zone
-                departureZone.depart();
+	/**
+	 * Repeatedly collect waiting ships from the departure zone.
+	 */
+	public void run() {
+		while (!isInterrupted()) {
+			// while (true) {
+			try {
+				// remove a vessel that is in the departure wait zone
+				departureZone.depart();
 
-                // let some time pass before the next departure
-                sleep(Params.departureLapse());
-            }
-            catch (InterruptedException e) {
-                this.interrupt();
-            }
-        }
-        System.out.println("Mention: Consumer thread is interrupted!!!");
-    }
+				// let some time pass before the next departure
+				sleep(Params.departureLapse());
+			} catch (InterruptedException e) {
+				this.interrupt();
+			}
+		}
+		System.out.println("Mention: Consumer thread is interrupted!!!");
+	}
 }

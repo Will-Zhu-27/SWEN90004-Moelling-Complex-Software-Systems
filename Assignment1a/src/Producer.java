@@ -6,38 +6,37 @@
  */
 
 public class Producer extends Thread {
-    /**
-     * the wait zone at which ships will arrive.
-     */
-    private WaitZone arrivalZone;
+	/**
+	 * the wait zone at which ships will arrive.
+	 */
+	private WaitZone arrivalZone;
 
 	/**
 	 * Create a new producer.
 	 * 
-	 * @param newArrivalZone
-	 *            the arrival zone
+	 * @param newArrivalZone the arrival zone
 	 */
-    Producer(WaitZone newArrivalZone) {
-        this.arrivalZone = newArrivalZone;
-    }
+	Producer(WaitZone newArrivalZone) {
+		this.arrivalZone = newArrivalZone;
+	}
 
-    /**
-     *  Cargo ships arrive at the arrival zone at random intervals.
-     */
-    public void run() {
-        while(!isInterrupted()) {
-    	//while(true) {
-            try {
-                // create a new cargo ship and send it to the arrival zone.
-                Ship ship = Ship.getNewShip();
-                arrivalZone.arrive(ship);
+	/**
+	 * Cargo ships arrive at the arrival zone at random intervals.
+	 */
+	public void run() {
+		while (!isInterrupted()) {
+			// while(true) {
+			try {
+				// create a new cargo ship and send it to the arrival zone.
+				Ship ship = Ship.getNewShip();
+				arrivalZone.arrive(ship, true);
 
-                // let some time pass before the next ship arrives
-                sleep(Params.arrivalLapse());
-            } catch (InterruptedException e) {
-                this.interrupt();
-            }
-        }
-        System.out.println("Mention: Producer thread is interrupted!!!");
-    }
+				// let some time pass before the next ship arrives
+				sleep(Params.arrivalLapse());
+			} catch (InterruptedException e) {
+				this.interrupt();
+			}
+		}
+		System.out.println("Mention: Producer thread is interrupted!!!");
+	}
 }

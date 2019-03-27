@@ -14,8 +14,8 @@ public class Pilot extends Thread {
 	 */
 	private WaitZone arrivalZone;
 	/**
-	 * when the cargo ship arrives at this spot, 
-	 * pilot can be transported off the cargo ship.
+	 * when the cargo ship arrives at this spot, pilot 
+	 * can be transported off the cargo ship.
 	 */
 	private WaitZone departureZone;
 	/**
@@ -30,19 +30,14 @@ public class Pilot extends Thread {
 	/**
 	 * Initialize an object of class Pilot and set its configuration.
 	 * 
-	 * @param id
-	 *            the unique of a pilot.
-	 * @param arrivalZone
-	 *            the arrival zone.
-	 * @param departureZone
-	 *            the departure zone.
-	 * @param tugs
-	 *            tugs pilot can be used.
-	 * @param berth
-	 *            the spot for the cargo ship to unload.
+	 * @param id            the unique of a pilot.
+	 * @param arrivalZone   the arrival zone.
+	 * @param departureZone the departure zone.
+	 * @param tugs          tugs pilot can be used.
+	 * @param berth         the spot for the cargo ship to unload.
 	 */
 	public Pilot(int id, WaitZone arrivalZone, WaitZone departureZone,
-			Tugs tugs, Berth berth) {
+				Tugs tugs, Berth berth) {
 		this.id = id;
 		this.arrivalZone = arrivalZone;
 		this.departureZone = departureZone;
@@ -53,8 +48,7 @@ public class Pilot extends Thread {
 	/**
 	 * Acquire some tugs.
 	 * 
-	 * @param num
-	 *            the number of tugs pilot needs.
+	 * @param num the number of tugs pilot needs.
 	 */
 	public void acquireTugs(int num) {
 		tugs.minusAvailableNum(num, id);
@@ -63,8 +57,7 @@ public class Pilot extends Thread {
 	/**
 	 * Release some tugs.
 	 * 
-	 * @param num
-	 *            the number of tugs pilot wants to release.
+	 * @param num the number of tugs pilot wants to release.
 	 */
 	public void releaseTugs(int num) {
 		tugs.plusAvailableNum(num, id);
@@ -84,9 +77,10 @@ public class Pilot extends Thread {
 	 */
 	public void run() {
 		Ship ship;
-		
+
 		while (true) {
-			/* Section1: pilot drives a cargo ship from arrival zone 
+			/*
+			 * Section1: pilot drives a cargo ship from arrival zone
 			 * to the vicinity of the berth.
 			 */
 			// pilot acquires ship
@@ -105,9 +99,10 @@ public class Pilot extends Thread {
 				e.printStackTrace();
 			}
 
-			/* now ship is in the vicinity of the berth.
-			 * Section2: the cargo ship docks, unloads, 
-			 * and undocks at the berth.
+			/*
+			 * now ship is in the vicinity of the berth.
+			 * Section2: the cargo ship docks,
+			 * unloads, and undocks at the berth.
 			 */
 			// ship docks at berth
 			berth.dock(ship);
@@ -120,8 +115,10 @@ public class Pilot extends Thread {
 			// ship docks from berth
 			berth.undock();
 
-			/* now ship is in the vicinity of the berth.
-			 * Section3: pilot drives the cargo ship to the departure zone.
+			/*
+			 * now ship is in the vicinity of the berth. 
+			 * Section3: pilot drives the cargo
+			 * ship to the departure zone.
 			 */
 			// travel time to the vicinity of the departure zone
 			try {
@@ -131,9 +128,9 @@ public class Pilot extends Thread {
 				e.printStackTrace();
 			}
 			// pilot releases ship when the departure zone is available.
-			//departureZone.waitZoneIsAvailable();
-			departureZone.arrive(ship);
-			System.out.println(this.toString() + " releases " + 
+			// departureZone.waitZoneIsAvailable();
+			departureZone.arrive(ship, false);
+			System.out.println(this.toString() + " releases " +
 					ship.toString() + ".");
 			// pilot releases tugs
 			releaseTugs(Params.UNDOCKING_TUGS);
