@@ -1,7 +1,8 @@
 /**
  * A cargo ship, with a unique id, that arrives at the space station to deliver
  * its cargo.
- *
+ * Student name: YUQIANG ZHU, ID: 853912
+ * 
  * @author ngeard@unimelb.edu.au
  *
  */

@@ -3,7 +3,7 @@ import java.util.Random;
 /**
  * A class which, for convenience, gathers together various system-wide
  * parameters, including time intervals.
- *
+ * Student name: YUQIANG ZHU, ID: 853912
  */
 class Params {
 	static final int NUM_PILOTS = 2;

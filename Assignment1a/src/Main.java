@@ -4,7 +4,8 @@
  * It is responsible for:
  * -creating all the components of the system;
  * -starting all of the processes;
- *
+ * Student name: YUQIANG ZHU, ID: 853912
+ * 
  * @author ngeard@unimelb.edu.au
  *
  */

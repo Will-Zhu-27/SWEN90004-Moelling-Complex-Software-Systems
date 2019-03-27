@@ -1,6 +1,7 @@
 /**
  * Periodically activates the shield to protect the space station from space
  * debris.
+ * Student name: YUQIANG ZHU, ID: 853912
  * 
  * @author yuqiangz@student.unimelb.edu.au
  *

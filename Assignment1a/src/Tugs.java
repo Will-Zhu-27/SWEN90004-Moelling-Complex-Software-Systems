@@ -1,5 +1,6 @@
 /**
  * Represents the total tugs.
+ * Student name: YUQIANG ZHU, ID: 853912
  * 
  * @author yuqiangz@student.unimelb.edu.au
  *

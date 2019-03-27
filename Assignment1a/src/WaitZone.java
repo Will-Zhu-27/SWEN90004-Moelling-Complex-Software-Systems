@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 /**
  * Represents a wait zone.
+ * Student name: YUQIANG ZHU, ID: 853912
  * 
  * @author yuqiangz@student.unimelb.edu.au
  *
