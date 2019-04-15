@@ -1,0 +1,40 @@
+const NUM_PILOTS = 2
+const NUM_TUGS = 5
+const DOCKING_TUGS = 3
+const UNDOCKING_TUGS = 2
+const CAPACITY_ARRIVAL_ZONE = 1
+const CAPACITY_DEPARTURE_ZONE = 1
+
+const False = 0
+const True = 1
+range Bool = False..True
+
+PILOT = (get_a_cargo_ship -> acquire_docking_tugs -> dock -> release_docking_tugs -> acquire_undocking_tugs -> undock
+	-> release_undocking_tugs -> release_a_cargo_ship -> PILOT ).
+
+ARRIVAL_ZONE = ARRIVAL_ZONE[0],
+ARRIVAL_ZONE[i : 0..CAPACITY_ARRIVAL_ZONE] = (when (i > 0) arrival_zone_release -> ARRIVAL_ZONE[i - 1]
+    |when(i < CAPACITY_ARRIVAL_ZONE) arrival_zone_get -> ARRIVAL_ZONE[i + 1]).
+
+DEPARTURE_ZONE = DEPARTURE_ZONE[0],
+DEPARTURE_ZONE[i : 0..CAPACITY_DEPARTURE_ZONE] = (when (i > 0) departure_zone_release -> DEPARTURE_ZONE[i - 1]
+    |when(i < CAPACITY_DEPARTURE_ZONE) departure_zone_get -> DEPARTURE_ZONE[i + 1]).
+
+BERTH_SHIELD = BERTH_SHIELD[False],
+BERTH_SHIELD[status : Bool] = (when (status == False) activate -> BERTH_SHIELD[True]
+    |when (status == False) dock -> BERTH_SHIELD[status]
+	|when (status == False) undock -> BERTH_SHIELD[status]
+    |when(status == True) deactivate -> BERTH_SHIELD[False]).
+
+TUGS = TUGS[NUM_TUGS],
+TUGS[i : 0..NUM_TUGS] = (when (i - 3 >= 0) acquire_docking_tugs -> TUGS[i - 3]
+    |when (i - 2 >= 0) acquire_undocking_tugs -> TUGS[i - 2]
+    |when (i + 3 <= NUM_TUGS) release_docking_tugs -> TUGS[i + 3]
+    |when (i + 2 <= NUM_TUGS) release_undocking_tugs -> TUGS[i + 2]).
+
+||USS_EMAFOR = (pilot[0..NUM_PILOTS - 1]:PILOT || pilot[0..NUM_PILOTS - 1]::(ARRIVAL_ZONE/{get_a_cargo_ship/arrival_zone_release})
+	|| pilot[0..NUM_PILOTS - 1]::(DEPARTURE_ZONE/{release_a_cargo_ship/departure_zone_get})
+    || pilot[0..NUM_PILOTS - 1]::TUGS
+    || pilot[0..NUM_PILOTS - 1]::BERTH_SHIELD).
+
+
