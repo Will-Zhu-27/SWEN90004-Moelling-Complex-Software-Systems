@@ -13,14 +13,6 @@ const False = 0
 const True = 1
 range Bool = False..True
 
-/* PILOT is the core of the whole system, it is responsible for acquiring 
- * a cargo ship from arrival zone, acquiring docking tugs to dock, releasing 
- * docking tugs, docking, unload, acquire undocking tugs, undocking, releasing
- * undocking tugs when the cargo ship arrives departure zone */
-PILOT = (get_a_cargo_ship -> acquire_docking_tugs -> dock
-    -> release_docking_tugs -> unload -> acquire_undocking_tugs -> undock
-    -> release_undocking_tugs -> release_a_cargo_ship -> PILOT ).
-
 /* ARRIVAL_ZONE represents the arrival zone, and the parameter shows the 
  * number of cargo ships in arrival zone. This process is responsible for 
  * producing cargo ships. */
@@ -72,12 +64,33 @@ TUGS[i : 0..NUM_TUGS] = (when (i - DOCKING_TUGS >= 0) acquire_docking_tugs
     |when (i + UNDOCKING_TUGS <= NUM_TUGS) release_undocking_tugs 
         -> TUGS[i + UNDOCKING_TUGS]).
 
+
+/* PILOT is the core of the whole system, it is responsible for acquiring 
+ * a cargo ship from arrival zone, acquiring docking tugs to dock, releasing 
+ * docking tugs, docking, unload, acquire undocking tugs, undocking, releasing
+ * undocking tugs when the cargo ship arrives departure zone */
+PILOT = (get_a_cargo_ship -> acquire_docking_tugs -> dock
+    -> release_docking_tugs -> unload -> acquire_undocking_tugs -> undock
+    -> release_undocking_tugs -> PILOT).
 /* The USS Emafor System */
 ||USS_EMAFOR = (pilot[0..NUM_PILOTS - 1]:PILOT 
     || pilot[0..NUM_PILOTS - 1]::(ARRIVAL_ZONE
         /{get_a_cargo_ship/pilot_get_a_cargo_ship, 
         acquire_docking_tugs/arrival_zone_release})
 	|| pilot[0..NUM_PILOTS - 1]::
-        (DEPARTURE_ZONE/{release_a_cargo_ship/departure_zone_get})
+        (DEPARTURE_ZONE/{release_undocking_tugs/departure_zone_get})
     || pilot[0..NUM_PILOTS - 1]::TUGS
     || pilot[0..NUM_PILOTS - 1]::BERTH).
+
+property SAFE_ORDER = ( dock -> release_docking_tugs -> unload -> acquire_undocking_tugs -> undock -> SAFE_ORDER).
+||CHECK = (USS_EMAFOR || pilot[0..NUM_PILOTS - 1]::SAFE_ORDER).
+
+/* if pilot acquire docking tugs, it must eventually can get docking tugs 
+ * instead of starvation */
+progress ACQUIRE_DOCKING_TUGS[i : 0..NUM_PILOTS - 1] = 
+    {pilot[i].acquire_docking_tugs}
+
+/* if pilot acquire docking tugs, it must eventually can get docking tugs 
+ * instead of starvation */
+progress ACQUIRE_UNDOCKING_TUGS[i : 0..NUM_PILOTS - 1] = 
+    {pilot[i].acquire_undocking_tugs}

@@ -1,0 +1,96 @@
+/* Name: Yuqiang Zhu.  Student ID: 853912.
+ * Student email: yuqiangz@student.unimelb.edu.au
+ */
+
+const NUM_PILOTS = 2
+const NUM_TUGS = 5
+const DOCKING_TUGS = 3
+const UNDOCKING_TUGS = 2
+const CAPACITY_ARRIVAL_ZONE = 1
+const CAPACITY_DEPARTURE_ZONE = 1
+
+const False = 0
+const True = 1
+range Bool = False..True
+
+/* ARRIVAL_ZONE represents the arrival zone, and the parameter shows the 
+ * number of cargo ships in arrival zone. This process is responsible for 
+ * producing cargo ships. */
+ARRIVAL_ZONE = ARRIVAL_ZONE[0],
+ARRIVAL_ZONE[i : 0..CAPACITY_ARRIVAL_ZONE] = 
+    /* arrival_zone_release means pilot acquires docking tugs and departures
+     * the arrival zone */
+    (when (i > 0) pilot_get_a_cargo_ship -> arrival_zone_release
+        -> ARRIVAL_ZONE[i - 1]
+    |when(i < CAPACITY_ARRIVAL_ZONE) arrival_zone_get -> ARRIVAL_ZONE[i + 1]).
+
+/* DEPARTURE_ZONE represents the departure zone, and the parameter shows the 
+ * number of cargo ships in departure zone. This process is responsible for 
+ * receiving cargo ships and consumering them */
+DEPARTURE_ZONE = DEPARTURE_ZONE[0],
+DEPARTURE_ZONE[i : 0..CAPACITY_DEPARTURE_ZONE] = 
+    (when (i > 0) departure_zone_release -> DEPARTURE_ZONE[i - 1]
+    /* departure_zone_get means pilot drives a cargo ship with undocking tugs
+     * into departure zone and release undocking tugs */
+    |when(i < CAPACITY_DEPARTURE_ZONE) departure_zone_get 
+        -> DEPARTURE_ZONE[i + 1]).
+
+/* BERTH represents the berth, the first parameter shows the status of the sheld
+ * , and the second parameter shows whether there is a cargo ship in the berth. 
+ * It is assumed that, at the beginning of the system, the shield is activated 
+ * and there is no cargo ships in the berth */
+BERTH = BERTH[True][False],
+BERTH[shield_status : Bool][ship_in : Bool] = 
+    (when (shield_status == False) activate -> BERTH[True][ship_in]
+    /* only when the shield is deactivated and there is no cargo ship in the 
+     * berth, pilot can drive a cargo ship into the berth */
+    |when (shield_status == False && ship_in == False) 
+        dock -> BERTH[shield_status][True]
+    /* only when the shield is deactivated and there is a cargo ship in the 
+     * berth, the cargo ship can undock */
+	|when (shield_status == False && ship_in == True) 
+        undock -> BERTH[shield_status][False]
+    |when(shield_status == True) deactivate -> BERTH[False][ship_in]).
+
+/* TUGS represents the tugs, and the parameter shows the number of free tugs 
+ * which can be acquired. It is responsible for acquiring and releasing tugs */
+TUGS = TUGS[NUM_TUGS],
+TUGS[i : 0..NUM_TUGS] = (when (i - DOCKING_TUGS >= 0) acquire_docking_tugs
+         -> TUGS[i - DOCKING_TUGS]
+    |when (i - UNDOCKING_TUGS >= 0) acquire_undocking_tugs 
+        -> TUGS[i - UNDOCKING_TUGS]
+    |when (i + DOCKING_TUGS <= NUM_TUGS) release_docking_tugs
+         -> TUGS[i + DOCKING_TUGS]
+    |when (i + UNDOCKING_TUGS <= NUM_TUGS) release_undocking_tugs 
+        -> TUGS[i + UNDOCKING_TUGS]).
+
+
+/* PILOT is the core of the whole system, it is responsible for acquiring 
+ * a cargo ship from arrival zone, acquiring docking tugs to dock, releasing 
+ * docking tugs, docking, unload, acquire undocking tugs, undocking, releasing
+ * undocking tugs when the cargo ship arrives departure zone */
+PILOT = (get_a_cargo_ship -> acquire_docking_tugs -> dock
+    -> release_docking_tugs -> unload -> acquire_undocking_tugs -> undock
+    -> release_undocking_tugs -> PILOT).
+/* The USS Emafor System */
+||USS_EMAFOR = (pilot[0..NUM_PILOTS - 1]:PILOT 
+    || pilot[0..NUM_PILOTS - 1]::(ARRIVAL_ZONE
+        /{get_a_cargo_ship/pilot_get_a_cargo_ship, 
+        acquire_docking_tugs/arrival_zone_release})
+	|| pilot[0..NUM_PILOTS - 1]::
+        (DEPARTURE_ZONE/{release_undocking_tugs/departure_zone_get})
+    || pilot[0..NUM_PILOTS - 1]::TUGS
+    || pilot[0..NUM_PILOTS - 1]::BERTH).
+/*  */
+property SAFE_ORDER = ( dock -> release_docking_tugs -> unload -> acquire_undocking_tugs -> undock -> SAFE_ORDER).
+||CHECK = (USS_EMAFOR || pilot[0..NUM_PILOTS - 1]::SAFE_ORDER).
+
+/* if pilot acquire docking tugs, it must eventually can get docking tugs 
+ * instead of starvation */
+progress ACQUIRE_DOCKING_TUGS[i : 0..NUM_PILOTS - 1] = 
+    {pilot[i].acquire_docking_tugs}
+
+/* if pilot acquire docking tugs, it must eventually can get docking tugs 
+ * instead of starvation */
+progress ACQUIRE_UNDOCKING_TUGS[i : 0..NUM_PILOTS - 1] = 
+    {pilot[i].acquire_undocking_tugs}
