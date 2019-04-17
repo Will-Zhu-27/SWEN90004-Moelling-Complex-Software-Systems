@@ -3,10 +3,10 @@
  * task1 & 2, Assignment 1b, SWEN90004
  */
 
-const NUM_PILOTS = 2
-const NUM_TUGS = 5
-const DOCKING_TUGS = 3
-const UNDOCKING_TUGS = 2
+const NUM_PILOTS = 6
+const NUM_TUGS = 10
+const DOCKING_TUGS = 2
+const UNDOCKING_TUGS = 3
 const CAPACITY_ARRIVAL_ZONE = 1
 const CAPACITY_DEPARTURE_ZONE = 1
 
@@ -27,7 +27,12 @@ PILOT = (acquire_ship -> acquire_docking_tugs -> dock -> release_docking_tugs
 /* TUGS represents the tugs, and the parameter shows the number of free tugs 
  * which can be acquired. It is responsible for acquiring and releasing tugs */
 TUGS = TUGS[NUM_TUGS],
-TUGS[i : 0..NUM_TUGS] = (when (i - DOCKING_TUGS >= 0) acquire_docking_tugs
+TUGS[i : 0..NUM_TUGS] = 
+	(when (i - DOCKING_TUGS >= 0 && NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS >= UNDOCKING_TUGS) acquire_docking_tugs
+         -> TUGS[i - DOCKING_TUGS]
+	|when (i - DOCKING_TUGS >= 0 && NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS < UNDOCKING_TUGS && NUM_TUGS < DOCKING_TUGS + UNDOCKING_TUGS) acquire_docking_tugs
+         -> TUGS[i - DOCKING_TUGS]
+	|when (i - DOCKING_TUGS >= UNDOCKING_TUGS && NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS < UNDOCKING_TUGS && NUM_TUGS >= DOCKING_TUGS + UNDOCKING_TUGS) acquire_docking_tugs
          -> TUGS[i - DOCKING_TUGS]
     |when (i - UNDOCKING_TUGS >= 0) acquire_undocking_tugs 
         -> TUGS[i - UNDOCKING_TUGS]
@@ -72,7 +77,11 @@ BERTH_SHIELD[status:Bool] =
 BERTH = BERTH[False],
 BERTH[ship_in:Bool] =
     (when (ship_in == False) pilot[PILOTS_RANGE].dock -> BERTH[True]
-	|when (ship_in == True) pilot[PILOTS_RANGE].undock -> BERTH[False]).
+	|when (ship_in == False && NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS >= UNDOCKING_TUGS) pilot[PILOTS_RANGE].acquire_docking_tugs -> BERTH[ship_in]
+	|when (ship_in == False && NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS < UNDOCKING_TUGS) pilot[PILOTS_RANGE].acquire_docking_tugs -> BERTH[ship_in]
+	|when (ship_in == True) pilot[PILOTS_RANGE].undock -> BERTH[False]
+	|when (ship_in == True && NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS >= UNDOCKING_TUGS) pilot[PILOTS_RANGE].acquire_docking_tugs -> BERTH[ship_in]
+	|when (ship_in == True && NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS < UNDOCKING_TUGS && NUM_TUGS >= DOCKING_TUGS + UNDOCKING_TUGS) pilot[PILOTS_RANGE].acquire_docking_tugs -> BERTH[ship_in]).
 
 /* CONSUMER consumes the ships in the departure zone.
  * DEPARTURE_ZONE represents the departure zone, and the parameter shows the 
@@ -102,8 +111,8 @@ property SAFE_PILOT_ORDER =
 /************************ liveness properties ************************/
 /* if pilot acquire docking tugs, it must eventually can get docking tugs 
  * instead of starvation */
-progress ACQUIRE_DOCKING_TUGS[i : PILOTS_RANGE] = 
-    {pilot[i].acquire_docking_tugs}
+//progress ACQUIRE_DOCKING_TUGS[i : PILOTS_RANGE] = 
+  //  {pilot[i].acquire_docking_tugs}
 
 /* if pilot acquire docking tugs, it must eventually can get docking tugs 
  * instead of starvation */
