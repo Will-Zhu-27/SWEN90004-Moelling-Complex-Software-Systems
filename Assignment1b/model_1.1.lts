@@ -1,8 +1,15 @@
-/* Name: Yuqiang Zhu.  Student ID: 853912.
+/** 
+ * Name: Yuqiang Zhu.  Student ID: 853912.
  * Student email: yuqiangz@student.unimelb.edu.au
  * task1 & 2, Assignment 1b, SWEN90004
  */
 
+/**
+ * Assume the system is only expected to work correctly under these
+ * evvironment: NUM_TUGS >= DOCKING_TUGS, NUM_TUGS >= UNDOCKING_TUGS, all of 
+ * system parameters are positive integer.
+ */
+/* constant of system parameters */
 const NUM_PILOTS = 2
 const NUM_TUGS = 5
 const DOCKING_TUGS = 3
@@ -36,6 +43,13 @@ TUGS[i : 0..NUM_TUGS] = (when (i - DOCKING_TUGS >= 0) acquire_docking_tugs
     |when (i + UNDOCKING_TUGS <= NUM_TUGS) release_undocking_tugs 
         -> TUGS[i + UNDOCKING_TUGS]).
 
+/* BERTH represents the berth, the parameter shows whether there is ship in the 
+ * berth */
+BERTH = BERTH[False],
+BERTH[ship_in:Bool] =
+    (when (ship_in == False) pilot[PILOTS_RANGE].dock -> BERTH[True]
+	|when (ship_in == True) pilot[PILOTS_RANGE].undock -> BERTH[False]).
+
 /* PRUDOCER produces new cargo ship when arrival zone is free.
  * ARRIVAL_ZONE represents the arrival zone. The first parameter shows the 
  * number of cargo ships in arrival zone. The second parameter is the number of 
@@ -67,13 +81,6 @@ BERTH_SHIELD[status:Bool] =
 	when (status == False) pilot[PILOTS_RANGE].undock -> BERTH_SHIELD[status]
 	|when (status == True) deactivate_shield -> BERTH_SHIELD[False]).
 
-/* BERTH represents the berth, the parameter shows whether there is ship in the 
- * berth */
-BERTH = BERTH[False],
-BERTH[ship_in:Bool] =
-    (when (ship_in == False) pilot[PILOTS_RANGE].dock -> BERTH[True]
-	|when (ship_in == True) pilot[PILOTS_RANGE].undock -> BERTH[False]).
-
 /* CONSUMER consumes the ships in the departure zone.
  * DEPARTURE_ZONE represents the departure zone, and the parameter shows the 
  * number of cargo ships in departure zone. This process is responsible for 
@@ -100,12 +107,8 @@ property SAFE_PILOT_ORDER =
 ||CHECK = (USS_EMAFOR || SAFE_PILOT_ORDER).
 
 /************************ liveness properties ************************/
-/* if pilot acquire docking tugs, it must eventually can get docking tugs 
- * instead of starvation */
-progress ACQUIRE_DOCKING_TUGS[i : PILOTS_RANGE] = 
-    {pilot[i].acquire_docking_tugs}
-
-/* if pilot acquire docking tugs, it must eventually can get docking tugs 
- * instead of starvation */
+/* If a pilot acquires docking tugs, it must eventually can get docking tugs 
+ * instead of starvation, then the pilot can acquire a new ship after releasing
+ * the old ship, which the system can run in a normal loop. */
 progress ACQUIRE_UNDOCKING_TUGS[i : PILOTS_RANGE] = 
     {pilot[i].acquire_undocking_tugs}
