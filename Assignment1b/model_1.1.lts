@@ -1,5 +1,6 @@
 /* Name: Yuqiang Zhu.  Student ID: 853912.
  * Student email: yuqiangz@student.unimelb.edu.au
+ * task1 & 2, Assignment 1b, SWEN90004
  */
 
 const NUM_PILOTS = 2
@@ -42,17 +43,16 @@ TUGS[i : 0..NUM_TUGS] = (when (i - DOCKING_TUGS >= 0) acquire_docking_tugs
  * initial state of arrival zone is no ship and no pilot in it. */
 PRODUCER = ARRIVAL_ZONE[0][0],
 ARRIVAL_ZONE[num_ships:0..CAPACITY_ARRIVAL_ZONE][num_pilots:0..NUM_PILOTS] =
-    (
-    // when pilot acquires a ship, the ship is still in the zone.
+    ( // when pilot acquires a ship, the ship is still in the zone.
     when (num_pilots < NUM_PILOTS && num_ships - num_pilots > 0) 
         pilot[PILOTS_RANGE].acquire_ship 
         -> ARRIVAL_ZONE[num_ships][num_pilots + 1]
-    // when pilot acquires docking ships, the ship departs the zone. 
-	|when (num_ships > 0 && num_pilots > 0) 
+    | // when pilot acquires docking ships, the ship departs the zone. 
+	when (num_ships > 0 && num_pilots > 0) 
         pilot[PILOTS_RANGE].acquire_docking_tugs 
         -> ARRIVAL_ZONE[num_ships - 1][num_pilots - 1]
-    // arrival zone gets a new cargo ship
-    |when (num_ships < CAPACITY_ARRIVAL_ZONE) arrival_zone_get_new_ship 
+    | // arrival zone gets a new cargo ship
+    when (num_ships < CAPACITY_ARRIVAL_ZONE) arrival_zone_get_new_ship 
         -> ARRIVAL_ZONE[num_ships + 1][num_pilots]
     ).
 
@@ -61,10 +61,10 @@ ARRIVAL_ZONE[num_ships:0..CAPACITY_ARRIVAL_ZONE][num_pilots:0..NUM_PILOTS] =
 OPERATOR = BERTH_SHIELD[True],
 BERTH_SHIELD[status:Bool] = 
     (when (status == False) activate_shield -> BERTH_SHIELD[True]
-    // pilot can only docks the ship when shield is deactivated.
-	|when (status == False) pilot[PILOTS_RANGE].dock -> BERTH_SHIELD[status]
-    // pilot can only undocks the ship when shield is deactivated.
-	|when (status == False) pilot[PILOTS_RANGE].undock -> BERTH_SHIELD[status]
+    | // pilot can only docks the ship when shield is deactivated.
+	when (status == False) pilot[PILOTS_RANGE].dock -> BERTH_SHIELD[status]
+    | // pilot can only undocks the ship when shield is deactivated.
+	when (status == False) pilot[PILOTS_RANGE].undock -> BERTH_SHIELD[status]
 	|when (status == True) deactivate_shield -> BERTH_SHIELD[False]).
 
 /* BERTH represents the berth, the parameter shows whether there is ship in the 
@@ -88,3 +88,24 @@ DEPARTURE_ZONE[num_ships:0..CAPACITY_DEPARTURE_ZONE] =
 /* The USS Emafor System */
 ||USS_EMAFOR = (PRODUCER || OPERATOR || BERTH || CONSUMER 
     || pilot[PILOTS_RANGE]:PILOT || pilot[PILOTS_RANGE]::TUGS).
+
+/************************ safety properties ************************/
+/* The berth can only accommodate one ship, so the actions of PILOT related with
+ * berth should only be done by the same PILOT */
+property SAFE_PILOT_ORDER = 
+    ( pilot[i:PILOTS_RANGE].dock -> pilot[i].release_docking_tugs 
+    -> pilot[i].unload -> pilot[i].acquire_undocking_tugs -> pilot[i].undock 
+    -> SAFE_PILOT_ORDER).
+
+||CHECK = (USS_EMAFOR || SAFE_PILOT_ORDER).
+
+/************************ liveness properties ************************/
+/* if pilot acquire docking tugs, it must eventually can get docking tugs 
+ * instead of starvation */
+progress ACQUIRE_DOCKING_TUGS[i : PILOTS_RANGE] = 
+    {pilot[i].acquire_docking_tugs}
+
+/* if pilot acquire docking tugs, it must eventually can get docking tugs 
+ * instead of starvation */
+progress ACQUIRE_UNDOCKING_TUGS[i : PILOTS_RANGE] = 
+    {pilot[i].acquire_undocking_tugs}

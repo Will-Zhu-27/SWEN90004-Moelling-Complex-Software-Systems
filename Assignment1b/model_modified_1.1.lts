@@ -1,5 +1,6 @@
 /* Name: Yuqiang Zhu.  Student ID: 853912.
  * Student email: yuqiangz@student.unimelb.edu.au
+ * task1 & 2, Assignment 1b, SWEN90004
  */
 
 const NUM_PILOTS = 2
@@ -89,6 +90,8 @@ DEPARTURE_ZONE[num_ships:0..CAPACITY_DEPARTURE_ZONE] =
     || pilot[PILOTS_RANGE]:PILOT || pilot[PILOTS_RANGE]::TUGS).
 
 /************************ safety properties ************************/
+/* The berth can only accommodate one ship, so the actions of PILOT related with
+ * berth should only be done by the same PILOT */
 property SAFE_PILOT_ORDER = 
     ( pilot[i:PILOTS_RANGE].dock -> pilot[i].release_docking_tugs 
     -> pilot[i].unload -> pilot[i].acquire_undocking_tugs -> pilot[i].undock 
