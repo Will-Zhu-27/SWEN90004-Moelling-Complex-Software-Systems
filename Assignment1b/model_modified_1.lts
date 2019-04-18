@@ -1,7 +1,7 @@
 /** 
  * Name: Yuqiang Zhu.  Student ID: 853912.
  * Student email: yuqiangz@student.unimelb.edu.au
- * task 1 & 2, Assignment 1b, SWEN90004
+ * task 3, Assignment 1b, SWEN90004
  */
 
 /**
@@ -31,11 +31,34 @@ PILOT = (acquire_ship -> acquire_docking_tugs -> dock -> release_docking_tugs
     -> unload -> acquire_undocking_tugs -> undock -> release_ship 
     -> release_undocking_tugs -> PILOT).
 
+/**************************** Modification ****************************/
+/* The potential problem is that the cargo ship in berth needs undocking tugs to
+ * undock while there is no enough tugs for undocking because they have been 
+ * acquired by pilots for docking needs. Under this scenario, the cargo ship in
+ * berth cannot leave the berth and other cargo ships cannot enter the berth. 
+ * The system is stuck and starves finally. This scenario can only happen when 
+ * NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS < UNDOCKING_TUGS, which can be 
+ * divided by two cases. To avoid starvation, TUGS and BERTH need to be 
+ * modified. */
+
 /* TUGS represents the tugs, and the parameter shows the number of free tugs 
  * which can be acquired. It is responsible for acquiring and releasing tugs */
 TUGS = TUGS[NUM_TUGS],
-TUGS[i : 0..NUM_TUGS] = (when (i - DOCKING_TUGS >= 0) acquire_docking_tugs
-         -> TUGS[i - DOCKING_TUGS]
+TUGS[i : 0..NUM_TUGS] = 
+	(when (i - DOCKING_TUGS >= 0 && NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS 
+        >= UNDOCKING_TUGS) acquire_docking_tugs -> TUGS[i - DOCKING_TUGS]
+	| /* case 1: DOCKING_TUGS and UNDOCKING_TUGS cannot be acquired at the 
+       * same time, docking tugs can only be acquired when all of tugs
+       * are free */
+    when (i == NUM_TUGS && NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS 
+        < UNDOCKING_TUGS && NUM_TUGS < DOCKING_TUGS + UNDOCKING_TUGS) 
+        acquire_docking_tugs -> TUGS[i - DOCKING_TUGS]
+	| /* case 2: DOCKING_TUGS and UNDOCKING_TUGS can be acquired at the 
+       * same time, TUGS needs to maintain the tugs for undocking */
+    when (i - DOCKING_TUGS >= UNDOCKING_TUGS &&
+        NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS < UNDOCKING_TUGS &&
+        NUM_TUGS >= DOCKING_TUGS + UNDOCKING_TUGS) acquire_docking_tugs
+        -> TUGS[i - DOCKING_TUGS]
     |when (i - UNDOCKING_TUGS >= 0) acquire_undocking_tugs 
         -> TUGS[i - UNDOCKING_TUGS]
     |when (i + DOCKING_TUGS <= NUM_TUGS) release_docking_tugs
@@ -48,7 +71,26 @@ TUGS[i : 0..NUM_TUGS] = (when (i - DOCKING_TUGS >= 0) acquire_docking_tugs
 BERTH = BERTH[False],
 BERTH[ship_in:Bool] =
     (when (ship_in == False) pilot[PILOTS_RANGE].dock -> BERTH[True]
-	|when (ship_in == True) pilot[PILOTS_RANGE].undock -> BERTH[False]).
+	|when (ship_in == False &&
+        NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS >= UNDOCKING_TUGS)
+        pilot[PILOTS_RANGE].acquire_docking_tugs -> BERTH[ship_in]
+	| /* case 1&2: if no ship in berth, docking tugs can be acquired */
+    when (ship_in == False && 
+        NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS < UNDOCKING_TUGS)
+        pilot[PILOTS_RANGE].acquire_docking_tugs -> BERTH[ship_in]
+	|when (ship_in == True) pilot[PILOTS_RANGE].undock -> BERTH[False]
+	|when (ship_in == True && 
+        NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS >= UNDOCKING_TUGS) 
+        pilot[PILOTS_RANGE].acquire_docking_tugs -> BERTH[ship_in]
+	| /* when there is a cargo ship in berth, only case 2 can acquire 
+       * docking tugs */
+    when (ship_in == True && 
+        NUM_TUGS - (NUM_PILOTS - 1) * DOCKING_TUGS < UNDOCKING_TUGS && 
+        NUM_TUGS >= DOCKING_TUGS + UNDOCKING_TUGS) 
+        pilot[PILOTS_RANGE].acquire_docking_tugs -> BERTH[ship_in]).
+
+/**************************** Modification End ****************************/
+
 
 /* PRUDOCER produces new cargo ship when arrival zone is free.
  * ARRIVAL_ZONE represents the arrival zone. The first parameter shows the 

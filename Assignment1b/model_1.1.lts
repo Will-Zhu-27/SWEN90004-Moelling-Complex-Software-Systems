@@ -107,7 +107,7 @@ property SAFE_PILOT_ORDER =
 ||CHECK = (USS_EMAFOR || SAFE_PILOT_ORDER).
 
 /************************ liveness properties ************************/
-/* If a pilot acquires docking tugs, it must eventually can get docking tugs 
+/* If a pilot acquires undocking tugs, it must eventually can get undocking tugs 
  * instead of starvation, then the pilot can acquire a new ship after releasing
  * the old ship, which the system can run in a normal loop. */
 progress ACQUIRE_UNDOCKING_TUGS[i : PILOTS_RANGE] = 
