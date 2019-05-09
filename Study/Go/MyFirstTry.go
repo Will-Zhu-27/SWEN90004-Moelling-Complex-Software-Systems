@@ -6,19 +6,22 @@ import (
 )
 
 func main() {
-	const n = 100000
-	leftmost := make(chan int)
-	right := leftmost
-	left := leftmost
-	for i := 0; i < n; i++ {
-		right = make(chan int)
-		go f(left, right)
-		left = right
-	}
-	go func(c chan int) { c <- 45 }(right)
-	fmt.Println(<-leftmost)
+	buff := make(chan int)
+	flag := make(chan bool)
+	go produce(buff)
+	go consume(buff, flag)
+	fmt.Println(<-flag)
 }
 
-func f(left, right chan int) {
-	left <- 1 + <-right
+func produce(test chan int) {
+	test <- 5
+}
+
+func consume(test chan int, flag chan bool) {
+	temp := -1
+	temp = <-test
+	if temp != -1 {
+		flag <- true
+	}
+	fmt.Println(temp)
 }
